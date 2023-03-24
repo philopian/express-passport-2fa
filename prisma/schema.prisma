@@ -1,0 +1,22 @@
+// This is your Prisma schema file,
+// Schema: https://pris.ly/d/prisma-schema
+// Types: https://www.prisma.io/docs/concepts/components/prisma-schema/data-model
+// CRUD https://www.prisma.io/docs/concepts/components/prisma-client/crud
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id                     String  @id @default(uuid())
+  email                  String  @unique
+  password               String
+  isTwoFactorAuthEnabled Boolean
+  twoFactorAuthSecret    String?
+  hashedRefreshToken     String?
+}
