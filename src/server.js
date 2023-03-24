@@ -15,7 +15,7 @@ app.use(cors(config.corsOptions));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.json());
-require("./passport");
+require("./middleware/passport");
 
 app.use("/auth", authRoutes);
 

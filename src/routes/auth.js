@@ -3,7 +3,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
-const prisma = require("../prisma");
+const prisma = require("../util/prisma");
 
 const router = express.Router();
 
