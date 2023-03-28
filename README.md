@@ -2,6 +2,33 @@
 Example of implementing a local strategy with Passport.js, Prisma ORM, SQLite database, bcrypt for password hashing, and otplib and qrcode for two-factor authentication (2FA) in an Express.js application
 
 
+
+# API FLOW
+
+1. `{{base_url}}/auth/register`  or  `{{base_url}}/auth/login`
+  ```json
+  {
+    "email": "user1@users.com",
+    "password": "123456789"
+  }
+  ```
+2. Enable MFA `{{base_url}}/2fa/qrcode`
+  - Use the Google Authenticator App or Brower Plugin
+3. Verify with MFA `{{base_url}}/2fa/verify`
+4. Go to whatever API routes your want e.g. `{{base_url}}/api/protected`
+5. Logout `{{base_url}}/auth/logout`
+
+
+
+
+
+
+
+
+
+
+
+
 # This app
 - 
 - Get started
