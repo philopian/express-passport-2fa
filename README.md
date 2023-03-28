@@ -14,7 +14,8 @@ Example of implementing a local strategy with Passport.js, Prisma ORM, SQLite da
   - Use the Google Authenticator App or Brower Plugin
 3. Verify with MFA `{{base_url}}/2fa/verify`
 4. Go to whatever API routes your want e.g. `{{base_url}}/api/protected`
-5. Logout `{{base_url}}/auth/logout`
+5. Refresh token after 15m **TODO**
+6. Logout `{{base_url}}/auth/logout`
 
 
 
@@ -65,9 +66,10 @@ Example of implementing a local strategy with Passport.js, Prisma ORM, SQLite da
 
   # JWT
   JWT_SECRET="this is a secret shhhhh"
+  JWT_TOKEN_EXPIRATION="15m"
   JWT_REFRESH_SECRET="this is a secret shhhhh"
+  JWT_REFRESH_TOKEN_EXPIRATION="1d"
 
   # Prisma
   DATABASE_URL="file:./dev.db"
   ```
-
