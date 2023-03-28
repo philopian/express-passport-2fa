@@ -5,7 +5,9 @@ const cors = require("cors");
 const passport = require("passport");
 
 const config = require("./config");
-const authRoutes = require("./routes/auth");
+const authRoutes = require("./auth/auth.controller");
+const twofaRoutes = require("./2fa/2fa.controller");
+const apiRoutes = require("./api/api.controller");
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -17,16 +19,10 @@ app.use(bodyParser.json());
 app.use(express.json());
 require("./middleware/passport");
 
+// Routes
 app.use("/auth", authRoutes);
-
-app.get("/api/open", (req, res) => {
-  res.json({ message: "This route is open" });
-});
-
-app.get("/api/protected", passport.authenticate("jwt", { session: false }), (req, res) => {
-  const { id, email } = req.user;
-  res.json({ message: "This route is protected", user: { id, email } });
-});
+app.use("/2fa", twofaRoutes);
+app.use("/api", apiRoutes);
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
