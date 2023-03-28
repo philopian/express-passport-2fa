@@ -2,13 +2,25 @@ require("dotenv").config();
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const otplib = require("otplib");
 
 const prisma = require("../util/prisma");
 
+const { authenticator } = otplib;
 const router = express.Router();
+
+function mintTokens({ id }) {
+  const { JWT_SECRET, JWT_REFRESH_SECRET, JWT_TOKEN_EXPIRATION, JWT_REFRESH_TOKEN_EXPIRATION } = process.env;
+  const accessToken = jwt.sign({ sub: id }, JWT_SECRET, { expiresIn: JWT_TOKEN_EXPIRATION });
+  const refreshToken = jwt.sign({ sub: id }, JWT_REFRESH_SECRET, { expiresIn: JWT_REFRESH_TOKEN_EXPIRATION });
+  return { accessToken, refreshToken };
+}
 
 router.post("/register", async (req, res) => {
   const { email, password } = req.body;
+
+  // Generate a secret key for the user's OTP token
+  const twoFactorAuthSecret = authenticator.generateSecret();
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -17,13 +29,15 @@ router.post("/register", async (req, res) => {
       data: {
         email,
         password: hashedPassword,
-        isTwoFactorAuthEnabled: false,
+        isTwoFactorAuthEnabled: true,
+        twoFactorAuthSecret,
       },
     });
 
-    const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
-    const accessToken = jwt.sign({ sub: user.id }, JWT_SECRET, { expiresIn: "10m" });
-    const refreshToken = jwt.sign({ sub: user.id }, JWT_REFRESH_SECRET, { expiresIn: "7d" });
+    // const { JWT_SECRET, JWT_REFRESH_SECRET, JWT_TOKEN_EXPIRATION, JWT_REFRESH_TOKEN_EXPIRATION } = process.env;
+    // const accessToken = jwt.sign({ sub: user.id }, JWT_SECRET, { expiresIn: JWT_TOKEN_EXPIRATION });
+    // const refreshToken = jwt.sign({ sub: user.id }, JWT_REFRESH_SECRET, { expiresIn: JWT_REFRESH_TOKEN_EXPIRATION });
+    const { accessToken, refreshToken } = mintTokens({ id: user.id });
 
     return res.json({ accessToken, refreshToken });
   } catch (error) {
@@ -46,9 +60,10 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
-    const accessToken = jwt.sign({ sub: user.id }, JWT_SECRET, { expiresIn: "10m" });
-    const refreshToken = jwt.sign({ sub: user.id }, JWT_REFRESH_SECRET, { expiresIn: "7d" });
+    // const { JWT_SECRET, JWT_REFRESH_SECRET, JWT_TOKEN_EXPIRATION, JWT_REFRESH_TOKEN_EXPIRATION } = process.env;
+    // const accessToken = jwt.sign({ sub: user.id }, JWT_SECRET, { expiresIn: JWT_TOKEN_EXPIRATION });
+    // const refreshToken = jwt.sign({ sub: user.id }, JWT_REFRESH_SECRET, { expiresIn: JWT_REFRESH_TOKEN_EXPIRATION });
+    const { accessToken, refreshToken } = mintTokens({ id: user.id });
 
     return res.json({ accessToken, refreshToken });
   } catch (error) {
