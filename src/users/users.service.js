@@ -1,14 +1,10 @@
 require("dotenv").config();
 const bcrypt = require("bcryptjs");
-// const { authenticator } = require("otplib");
 
 const prisma = require("../util/prisma");
 
 async function createNewUser({ email, password }) {
   const hashedPassword = await bcrypt.hash(password, 10);
-  // const mfaFactorAuthSecret = authenticator.generateSecret();
-
-  // genMfaSecret();
 
   const user = await prisma.users.create({
     data: {
@@ -37,25 +33,6 @@ async function comparePasswords({ password, hashedPassword }) {
   return passwordMatch;
 }
 
-// async function createMfaSecret({ userId }) {
-//   // Add MFA secret to DB
-//   const mfaSecret = authenticator.generateSecret();
-//   await prisma.users.update({
-//     data: {
-//       // With Prisma when a field is assigned undefined it means ignore this and do nothing for this field.
-//       id: undefined,
-//       email: undefined,
-//       password: undefined,
-//       isMfaAuthEnabled: undefined,
-//       mfaFactorAuthSecret: mfaSecret,
-//       hashedRefreshToken: undefined,
-//     },
-//     where: { id: userId },
-//   });
-
-//   return { mfaSecret };
-// }
-
 async function removeRefreshToken({ email }) {
   await prisma.users.update({
     data: {
@@ -77,6 +54,5 @@ module.exports = {
   findUniqueUserFromId,
   findUniqueUserFromEmail,
   comparePasswords,
-  // createMfaSecret,
   removeRefreshToken,
 };

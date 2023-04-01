@@ -72,7 +72,6 @@ passport.use(
       secretOrKey: process.env.JWT_MFA_SECRET,
     },
     async (jwtPayload, done) => {
-      console.log("🚀 ~ file: passport.js:72 ~ jwtPayload:", jwtPayload);
       try {
         const user = await prisma.users.findUnique({ where: { id: jwtPayload.sub } });
         if (!user) return done(null, false);
@@ -94,8 +93,6 @@ passport.use(
     },
 
     async (req, jwtPayload, done) => {
-      console.log("🚀 ~ file: passport.js:97 ~ req:", req.body);
-      console.log("🚀 ~ file: passport.js:72 ~ jwtPayload:", jwtPayload);
       try {
         // Verify user exist in the DB
         const user = await prisma.users.findUnique({ where: { id: jwtPayload.sub } });
