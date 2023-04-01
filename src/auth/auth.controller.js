@@ -3,6 +3,9 @@ const passport = require("passport");
 
 const authService = require("../auth/auth.service");
 const usersService = require("../users/users.service");
+const config = require("../config");
+
+const { jwtStrategy } = config;
 
 const router = express.Router();
 
@@ -18,16 +21,16 @@ router.post("/register", async (req, res) => {
     const newUser = await usersService.createNewUser({ email, password });
 
     // Mint new tokens (and add hashed Refreshtoken)
-    const { accessToken, refreshToken } = await authService.mintTokens({ id: newUser.id });
+    const { mfaToken } = await authService.mintTokens({ id: newUser.id });
 
-    return res.json({ accessToken, refreshToken });
+    return res.json({ mfaToken });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal Server Error: Something went wrong" });
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", passport.authenticate(jwtStrategy.login, { session: false }), async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -39,17 +42,17 @@ router.post("/login", async (req, res) => {
     const passwordMatch = await usersService.comparePasswords({ password, hashedPassword: user.password });
     if (!passwordMatch) return res.status(401).json({ message: "Unauthorized: Invalid credentials" });
 
-    // Mint tokens
-    const { accessToken, refreshToken } = await authService.mintTokens({ id: user.id });
+    // Mint MFA token (only good for Google Authenticator Code)
+    const { mfaToken } = await authService.mintTokens({ id: user.id });
 
-    return res.json({ accessToken, refreshToken });
+    return res.json({ mfaToken });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal Server Error: Something went wrong" });
   }
 });
 
-router.get("/logout", passport.authenticate("jwt", { session: false }), async (req, res) => {
+router.get("/logout", passport.authenticate(jwtStrategy.defaultJwt, { session: false }), async (req, res) => {
   try {
     const { user } = req;
 

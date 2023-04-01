@@ -5,7 +5,7 @@ const cors = require("cors");
 
 const config = require("./config");
 const authRoutes = require("./auth/auth.controller");
-const twofaRoutes = require("./2fa/2fa.controller");
+const twofaRoutes = require("./mfa/mfa.controller");
 const apiRoutes = require("./api/api.controller");
 
 const port = process.env.PORT || 3000;
@@ -20,7 +20,7 @@ require("./middleware/passport");
 
 // Routes
 app.use("/auth", authRoutes);
-app.use("/2fa", twofaRoutes);
+app.use("/mfa", twofaRoutes);
 app.use("/api", apiRoutes);
 
 app.listen(port, () => {

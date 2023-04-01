@@ -1,12 +1,13 @@
 {
-  "name": "express-passport-2fa",
+  "name": "express-passport-mfa",
   "version": "1.0.0",
   "main": "src/server.js",
   "license": "MIT",
   "scripts": {
     "start": "node src/server.js",
     "dev": "npx nodemon src/server.js",
-    "gen:random": "node -e \"console.log(require('crypto').randomBytes(256).toString('base64'))\"",
+    "gen:jwt-secret": "node -e \"console.log(require('crypto').randomBytes(64).toString('base64'))\"",
+    "gen:mfa": "node -e \"console.log(require('otplib').authenticator.generateSecret())\"",
     "prisma": "prisma db push"
   },
   "dependencies": {

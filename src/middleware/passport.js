@@ -1,38 +1,47 @@
 require("dotenv").config();
 const passport = require("passport");
 const passportJWT = require("passport-jwt");
-// const LocalStrategy = require("passport-local").Strategy;
+const bcrypt = require("bcryptjs");
+const LocalStrategy = require("passport-local").Strategy;
+const { authenticator } = require("otplib");
 
 const prisma = require("../util/prisma");
 
 const JwtStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
+const config = require("../config");
 
-// // Local Strategy
-// passport.use(
-//   new LocalStrategy(
-//     {
-//       usernameField: "email",
-//       passwordField: "password",
-//       session: false,
-//     },
-//     (email, password, done) => {
-//       User.findOne({ email: email })
-//         .then((user) => {
-//           if (!user) {
-//             return done(null, false, { message: "Incorrect email." });
-//           }
-//           if (!user.validPassword(password)) {
-//             return done(null, false, { message: "Incorrect password." });
-//           }
-//           return done(null, user);
-//         })
-//         .catch((err) => done(err));
-//     }
-//   )
-// );
+const { jwtStrategy } = config;
+
+// Local Strategy
+passport.use(
+  jwtStrategy.login,
+  new LocalStrategy(
+    {
+      usernameField: "email",
+      passwordField: "password",
+      session: false,
+    },
+    async (email, password, done) => {
+      try {
+        // Check to see if user exist in DB
+        const user = await prisma.users.findUnique({ where: { email } });
+        if (!user) return done(null, false);
+
+        // Check to see if the password matches
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) return done(null, false);
+
+        return done(null, user);
+      } catch (error) {
+        return done(error, false);
+      }
+    }
+  )
+);
 
 passport.use(
+  jwtStrategy.defaultJwt,
   new JwtStrategy(
     {
       jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
@@ -43,9 +52,9 @@ passport.use(
         const user = await prisma.users.findUnique({ where: { id: jwtPayload.sub } });
         if (!user) return done(null, false);
 
-        // *NOTE*: MAYBE Force user to have to 2FA with Google Authenticator
+        // *NOTE*: MAYBE Force user to have to MFA with Google Authenticator
         // if (!jwtPayload.mfaValid) return done(null, false);
-        // *NOTE*: MAYBE Force user to have to 2FA with Google Authenticator
+        // *NOTE*: MAYBE Force user to have to MFA with Google Authenticator
 
         return done(null, { ...user, mfaValid: jwtPayload.mfaValid });
       } catch (error) {
@@ -56,16 +65,51 @@ passport.use(
 );
 
 passport.use(
-  "google-authenticator",
+  jwtStrategy.googleAuthenticatorQr,
   new JwtStrategy(
     {
       jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.JWT_SECRET,
+      secretOrKey: process.env.JWT_MFA_SECRET,
     },
     async (jwtPayload, done) => {
+      console.log("🚀 ~ file: passport.js:72 ~ jwtPayload:", jwtPayload);
       try {
         const user = await prisma.users.findUnique({ where: { id: jwtPayload.sub } });
         if (!user) return done(null, false);
+        return done(null, user);
+      } catch (error) {
+        return done(error, false);
+      }
+    }
+  )
+);
+
+passport.use(
+  jwtStrategy.googleAuthenticator,
+  new JwtStrategy(
+    {
+      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+      secretOrKey: process.env.JWT_MFA_SECRET,
+      passReqToCallback: true,
+    },
+
+    async (req, jwtPayload, done) => {
+      console.log("🚀 ~ file: passport.js:97 ~ req:", req.body);
+      console.log("🚀 ~ file: passport.js:72 ~ jwtPayload:", jwtPayload);
+      try {
+        // Verify user exist in the DB
+        const user = await prisma.users.findUnique({ where: { id: jwtPayload.sub } });
+        if (!user) return done(null, false);
+
+        // Make sure the MFA code is passed in
+        const { code } = req.body;
+        if (!code) return done(null, false);
+
+        // Verify with authenticator
+        const { MFA_SECRET } = process.env;
+        const mfaValid = authenticator.verify({ token: code, secret: MFA_SECRET });
+        if (!mfaValid) return done(null, false);
+
         return done(null, user);
       } catch (error) {
         return done(error, false);

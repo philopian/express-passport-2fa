@@ -4,17 +4,29 @@ const jwt = require("jsonwebtoken");
 
 const prisma = require("../util/prisma");
 
-async function mintTokens({ id, mfaValid }) {
-  const { JWT_SECRET, JWT_REFRESH_SECRET, JWT_TOKEN_EXPIRATION, JWT_REFRESH_TOKEN_EXPIRATION } = process.env;
-  const jwtPayload = mfaValid
-    ? {
-        sub: id,
-        mfaValid,
-      }
-    : {
-        sub: id,
-        mfaValid: false,
-      };
+async function mintTokens({ id }) {
+  const {
+    JWT_MFA_SECRET,
+    JWT_MFA_TOKEN_EXPIRATION,
+    JWT_SECRET,
+    JWT_REFRESH_SECRET,
+    JWT_TOKEN_EXPIRATION,
+    JWT_REFRESH_TOKEN_EXPIRATION,
+  } = process.env;
+
+  const mfaJwtPayload = {
+    sub: id,
+
+    mfaValid: false,
+  };
+
+  const jwtPayload = {
+    sub: id,
+    mfaValid: true,
+  };
+
+  // *NOTE: `mfaToken` => JWT without the `mfaValid` payload property, (only for login then ask user to MFA)
+  const mfaToken = jwt.sign(mfaJwtPayload, JWT_MFA_SECRET, { expiresIn: JWT_MFA_TOKEN_EXPIRATION });
   const accessToken = jwt.sign(jwtPayload, JWT_SECRET, { expiresIn: JWT_TOKEN_EXPIRATION });
   const refreshToken = jwt.sign(jwtPayload, JWT_REFRESH_SECRET, { expiresIn: JWT_REFRESH_TOKEN_EXPIRATION });
 
@@ -26,14 +38,13 @@ async function mintTokens({ id, mfaValid }) {
       email: undefined,
       name: undefined,
       password: undefined,
-      isTwoFactorAuthEnabled: undefined,
-      twoFactorAuthSecret: undefined,
+      isMfaAuthEnabled: undefined,
       hashedRefreshToken,
     },
     where: { id },
   });
 
-  return { accessToken, refreshToken };
+  return { mfaToken, accessToken, refreshToken };
 }
 
 async function decodeJwt({ token }) {

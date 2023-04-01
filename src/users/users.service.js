@@ -1,19 +1,20 @@
 require("dotenv").config();
 const bcrypt = require("bcryptjs");
-const { authenticator } = require("otplib");
+// const { authenticator } = require("otplib");
 
 const prisma = require("../util/prisma");
 
 async function createNewUser({ email, password }) {
   const hashedPassword = await bcrypt.hash(password, 10);
-  const mfaSecret = authenticator.generateSecret();
+  // const mfaFactorAuthSecret = authenticator.generateSecret();
+
+  // genMfaSecret();
 
   const user = await prisma.users.create({
     data: {
       email,
       password: hashedPassword,
-      isTwoFactorAuthEnabled: true,
-      twoFactorAuthSecret: mfaSecret,
+      isMfaAuthEnabled: true, // MFA enable by default
       hashedRefreshToken: undefined,
       // TODO: create JWT fingerprint
     },
@@ -36,24 +37,24 @@ async function comparePasswords({ password, hashedPassword }) {
   return passwordMatch;
 }
 
-async function createMfaSecret({ userId }) {
-  // Add 2FA secret to DB
-  const mfaSecret = authenticator.generateSecret();
-  await prisma.users.update({
-    data: {
-      // With Prisma when a field is assigned undefined it means ignore this and do nothing for this field.
-      id: undefined,
-      email: undefined,
-      password: undefined,
-      isTwoFactorAuthEnabled: undefined,
-      twoFactorAuthSecret: mfaSecret,
-      hashedRefreshToken: undefined,
-    },
-    where: { id: userId },
-  });
+// async function createMfaSecret({ userId }) {
+//   // Add MFA secret to DB
+//   const mfaSecret = authenticator.generateSecret();
+//   await prisma.users.update({
+//     data: {
+//       // With Prisma when a field is assigned undefined it means ignore this and do nothing for this field.
+//       id: undefined,
+//       email: undefined,
+//       password: undefined,
+//       isMfaAuthEnabled: undefined,
+//       mfaFactorAuthSecret: mfaSecret,
+//       hashedRefreshToken: undefined,
+//     },
+//     where: { id: userId },
+//   });
 
-  return { mfaSecret };
-}
+//   return { mfaSecret };
+// }
 
 async function removeRefreshToken({ email }) {
   await prisma.users.update({
@@ -62,8 +63,7 @@ async function removeRefreshToken({ email }) {
       id: undefined,
       email: undefined,
       password: undefined,
-      isTwoFactorAuthEnabled: undefined,
-      twoFactorAuthSecret: undefined,
+      isMfaAuthEnabled: undefined,
       hashedRefreshToken: null,
     },
     where: { email },
@@ -77,6 +77,6 @@ module.exports = {
   findUniqueUserFromId,
   findUniqueUserFromEmail,
   comparePasswords,
-  createMfaSecret,
+  // createMfaSecret,
   removeRefreshToken,
 };
