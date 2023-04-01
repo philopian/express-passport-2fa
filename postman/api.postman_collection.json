@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "9f0eaedf-75d2-4220-a439-e29a472df2e0",
-		"name": "express-passport-2fa",
+		"name": "express-passport-mfa",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -121,7 +121,7 @@
 			"response": []
 		},
 		{
-			"name": "2fa QR",
+			"name": "mfa QR",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -136,12 +136,12 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/2fa/qrcode",
+					"raw": "{{base_url}}/mfa/qrcode",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"2fa",
+						"mfa",
 						"qrcode"
 					]
 				}
@@ -149,7 +149,7 @@
 			"response": []
 		},
 		{
-			"name": "2fa verify",
+			"name": "mfa verify",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -173,12 +173,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/2fa/verify",
+					"raw": "{{base_url}}/mfa/verify",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"2fa",
+						"mfa",
 						"verify"
 					]
 				}
@@ -186,7 +186,7 @@
 			"response": []
 		},
 		{
-			"name": "2fa turn-on",
+			"name": "mfa turn-on",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -210,12 +210,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/2fa/turn-on",
+					"raw": "{{base_url}}/mfa/turn-on",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"2fa",
+						"mfa",
 						"turn-on"
 					]
 				}
