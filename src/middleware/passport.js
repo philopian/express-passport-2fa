@@ -8,7 +8,7 @@ const { authenticator } = require("otplib");
 const prisma = require("../util/prisma");
 
 const JwtStrategy = passportJWT.Strategy;
-const ExtractJWT = passportJWT.ExtractJwt;
+const ExtractJwt = passportJWT.ExtractJwt;
 const config = require("../config");
 
 const { jwtStrategy } = config;
@@ -44,7 +44,7 @@ passport.use(
   jwtStrategy.defaultJwt,
   new JwtStrategy(
     {
-      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: process.env.JWT_SECRET,
     },
     async (jwtPayload, done) => {
@@ -68,7 +68,7 @@ passport.use(
   jwtStrategy.googleAuthenticatorQr,
   new JwtStrategy(
     {
-      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: process.env.JWT_MFA_SECRET,
     },
     async (jwtPayload, done) => {
@@ -87,7 +87,7 @@ passport.use(
   jwtStrategy.googleAuthenticator,
   new JwtStrategy(
     {
-      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: process.env.JWT_MFA_SECRET,
       passReqToCallback: true,
     },
@@ -108,6 +108,28 @@ passport.use(
         if (!mfaValid) return done(null, false);
 
         return done(null, user);
+      } catch (error) {
+        return done(error, false);
+      }
+    }
+  )
+);
+
+passport.use(
+  jwtStrategy.refreshJwt,
+  new JwtStrategy(
+    {
+      jwtFromRequest: ExtractJwt.fromBodyField("refreshToken"),
+      secretOrKey: process.env.JWT_REFRESH_SECRET,
+      passReqToCallback: true,
+    },
+
+    async (req, jwtPayload, done) => {
+      try {
+        const user = await prisma.users.findUnique({ where: { id: jwtPayload.sub } });
+        if (!user) return done(null, false);
+
+        return done(null, { ...user, mfaValid: jwtPayload.mfaValid });
       } catch (error) {
         return done(error, false);
       }

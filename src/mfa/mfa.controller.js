@@ -1,6 +1,5 @@
 const express = require("express");
 const passport = require("passport");
-const { authenticator } = require("otplib");
 
 const mfaService = require("./mfa.service");
 const authService = require("../auth/auth.service");

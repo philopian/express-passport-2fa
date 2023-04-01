@@ -66,4 +66,22 @@ router.get("/logout", passport.authenticate(jwtStrategy.defaultJwt, { session: f
   }
 });
 
+router.post("/refresh", passport.authenticate(jwtStrategy.refreshJwt, { session: false }), async (req, res) => {
+  try {
+    const { user } = req;
+    if (!user) return res.status(401).send({ message: "Unauthorized: Invalid user" });
+
+    // Make sure that MFA is enabled for this user in the DB
+    const { isMfaAuthEnabled, id } = user;
+    if (!isMfaAuthEnabled) return res.status(426).send({ message: "Upgrade Required: mfa not enabled" });
+
+    const { accessToken, refreshToken } = await authService.mintTokens({ id });
+
+    return res.json({ accessToken, refreshToken });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
 module.exports = router;

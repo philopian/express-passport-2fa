@@ -13,5 +13,6 @@ module.exports = {
     login: "login",
     googleAuthenticatorQr: "google-authenticatorQr",
     googleAuthenticator: "google-authenticator",
+    refreshJwt: "jwt-refresh",
   },
 };
