@@ -1,0 +1,91 @@
+{
+  "paths": {
+    "/api/open": {
+      "get": {
+        "tags": ["api"],
+        "summary": "Open route",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "This route is open"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "security": [[]]
+    },
+    "/api/protected": {
+      "get": {
+        "tags": ["api"],
+        "summary": "Protected route",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "This route is protected"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": 123
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "example@email.com"
+                        },
+                        "mfaValid": {
+                          "type": "boolean",
+                          "example": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden: make sure you MFA with Google Authenticator"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "security": [
+        {
+          "JWT": []
+        }
+      ]
+    }
+  }
+}

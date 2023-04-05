@@ -13,8 +13,8 @@ datasource db {
 }
 
 model posts {
-  id       String @id @default(uuid())
-  messages String
+  id      String @id @default(uuid())
+  message String @unique
 }
 
 model users {

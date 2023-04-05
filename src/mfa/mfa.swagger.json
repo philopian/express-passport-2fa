@@ -1,0 +1,57 @@
+{
+	"paths": {
+		"/mfa/qrcode": {
+			"get": {
+        "tags": ["mfa"],
+				"summary": "Get QR Code for MFA",
+				"security": [
+					{
+						"jwtAuth": []
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"426": {
+						"description": "Upgrade Required"
+					}
+				},
+				"operationId": "getQrCode"
+			},
+			"post": {
+        "tags": ["mfa"],
+				"summary": "Verify MFA token and get access and refresh tokens",
+				"security": [
+					{
+						"jwtAuth": []
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"426": {
+						"description": "Upgrade Required"
+					}
+				},
+				"operationId": "verifyMfaToken"
+			}
+		},
+		"components": {
+			"securitySchemes": {
+				"jwtAuth": {
+					"type": "http",
+					"scheme": "bearer",
+					"bearerFormat": "JWT"
+				}
+			}
+		}
+	}
+}

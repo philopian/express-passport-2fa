@@ -2,8 +2,10 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const swaggerUi = require("swagger-ui-express");
 
 const config = require("./config");
+
 const authRoutes = require("./auth/auth.controller");
 const twofaRoutes = require("./mfa/mfa.controller");
 const apiRoutes = require("./api/api.controller");
@@ -16,6 +18,7 @@ app.use(cors(config.corsOptions));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.json());
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(config.swagger));
 require("./middleware/passport");
 
 // Routes

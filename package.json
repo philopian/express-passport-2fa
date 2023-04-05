@@ -1,16 +1,16 @@
 {
   "name": "express-passport-mfa",
   "version": "1.0.0",
-  "main": "src/server.js",
+  "main": "src/main.js",
   "license": "MIT",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "npx nodemon src/server.js",
+    "start": "node src/main.js",
+    "dev": "npx nodemon src/main.js",
     "gen:jwt-secret": "node -e \"console.log(require('crypto').randomBytes(64).toString('base64'))\"",
     "gen:mfa": "node -e \"console.log(require('otplib').authenticator.generateSecret())\"",
     "preprisma": "cat prisma/base.prisma > prisma/schema.prisma && cat src/*/*.prisma >> prisma/schema.prisma",
-    "prisma": "prisma db push"
-
+    "prisma": "prisma db push",
+    "new": "node tools/new"
   },
   "dependencies": {
     "@prisma/client": "^4.11.0",
@@ -25,6 +25,7 @@
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "prisma": "^4.11.0",
-    "qrcode": "^1.5.1"
+    "qrcode": "^1.5.1",
+    "swagger-ui-express": "^4.6.2"
   }
 }
