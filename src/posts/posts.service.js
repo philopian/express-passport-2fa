@@ -1,13 +1,13 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
 const getAllItems = async () => {
-  return await prisma.item.findMany();
+  return await prisma.posts.findMany();
 };
 
 const getItemById = async (id) => {
-  return await prisma.item.findUnique({
+  return await prisma.posts.findUnique({
     where: {
       id: parseInt(id),
     },
@@ -15,13 +15,13 @@ const getItemById = async (id) => {
 };
 
 const createItem = async (data) => {
-  return await prisma.item.create({
+  return await prisma.posts.create({
     data,
   });
 };
 
 const updateItem = async (id, data) => {
-  return await prisma.item.update({
+  return await prisma.posts.update({
     where: {
       id: parseInt(id),
     },
@@ -30,7 +30,7 @@ const updateItem = async (id, data) => {
 };
 
 const deleteItem = async (id) => {
-  return await prisma.item.delete({
+  return await prisma.posts.delete({
     where: {
       id: parseInt(id),
     },

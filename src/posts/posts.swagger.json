@@ -1,6 +1,6 @@
 {
   "paths": {
-    "posts/": {
+    "/posts/": {
       "get": {
         "tags": ["posts"],
         "description": "Get all items",
@@ -42,7 +42,7 @@
         }
       }
     },
-    "posts/{id}": {
+    "/posts/{id}": {
       "get": {
         "tags": ["posts"],
         "description": "Get a single item by ID",

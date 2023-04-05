@@ -76,11 +76,11 @@ const serviceFileContent = () => `const { PrismaClient } = require('@prisma/clie
 const prisma = new PrismaClient();
 
 const getAllItems = async () => {
-  return await prisma.item.findMany();
+  return await prisma.${componentName}.findMany();
 };
 
 const getItemById = async (id) => {
-  return await prisma.item.findUnique({
+  return await prisma.${componentName}.findUnique({
     where: {
       id: parseInt(id),
     },
@@ -88,13 +88,13 @@ const getItemById = async (id) => {
 };
 
 const createItem = async (data) => {
-  return await prisma.item.create({
+  return await prisma.${componentName}.create({
     data,
   });
 };
 
 const updateItem = async (id, data) => {
-  return await prisma.item.update({
+  return await prisma.${componentName}.update({
     where: {
       id: parseInt(id),
     },
@@ -103,7 +103,7 @@ const updateItem = async (id, data) => {
 };
 
 const deleteItem = async (id) => {
-  return await prisma.item.delete({
+  return await prisma.${componentName}.delete({
     where: {
       id: parseInt(id),
     },
@@ -129,7 +129,7 @@ const prismaFileContent = (componentName) => `model ${componentName} {
 
 const swaggerFileContent = (componentName) => `{
   "paths": {
-    "posts/": {
+    "/${componentName}/": {
       "get": {
         "tags": ["${componentName}"],
         "description": "Get all items",
@@ -171,7 +171,7 @@ const swaggerFileContent = (componentName) => `{
         }
       }
     },
-    "posts/{id}": {
+    "/${componentName}/{id}": {
       "get": {
         "tags": ["${componentName}"],
         "description": "Get a single item by ID",

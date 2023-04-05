@@ -9,6 +9,7 @@ const config = require("./config");
 const authRoutes = require("./auth/auth.controller");
 const twofaRoutes = require("./mfa/mfa.controller");
 const apiRoutes = require("./api/api.controller");
+const postsRoutes = require("./posts/posts.controller");
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -25,6 +26,7 @@ require("./middleware/passport");
 app.use("/auth", authRoutes);
 app.use("/mfa", twofaRoutes);
 app.use("/api", apiRoutes);
+app.use("/posts", postsRoutes);
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
