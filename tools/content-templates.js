@@ -71,7 +71,7 @@ router.delete("/:id", async (req, res) => {
 module.exports = router;
 `;
 
-const serviceFileContent = () => `const { PrismaClient } = require('@prisma/client');
+const serviceFileContent = (componentName) => `const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
@@ -81,9 +81,7 @@ const getAllItems = async () => {
 
 const getItemById = async (id) => {
   return await prisma.${componentName}.findUnique({
-    where: {
-      id: parseInt(id),
-    },
+    where: { id },
   });
 };
 
@@ -95,18 +93,14 @@ const createItem = async (data) => {
 
 const updateItem = async (id, data) => {
   return await prisma.${componentName}.update({
-    where: {
-      id: parseInt(id),
-    },
+    where: { id },
     data,
   });
 };
 
 const deleteItem = async (id) => {
   return await prisma.${componentName}.delete({
-    where: {
-      id: parseInt(id),
-    },
+    where: { id },
   });
 };
 
@@ -117,6 +111,7 @@ module.exports = {
   updateItem,
   deleteItem,
 };
+
 `;
 
 const prismaFileContent = (componentName) => `model ${componentName} {
@@ -149,10 +144,7 @@ const swaggerFileContent = (componentName) => `{
               "schema": {
                 "type": "object",
                 "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "description": {
+                  "message": {
                     "type": "string"
                   }
                 },
@@ -182,7 +174,7 @@ const swaggerFileContent = (componentName) => `{
             "description": "ID of the item to retrieve",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "string"
             }
           }
         ],
@@ -205,7 +197,7 @@ const swaggerFileContent = (componentName) => `{
             "description": "ID of the item to update",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "string"
             }
           }
         ],
@@ -216,14 +208,11 @@ const swaggerFileContent = (componentName) => `{
               "schema": {
                 "type": "object",
                 "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "description": {
+                  "message": {
                     "type": "string"
                   }
                 },
-                "required": ["name"]
+                "required": ["message"]
               }
             }
           }
@@ -250,7 +239,7 @@ const swaggerFileContent = (componentName) => `{
             "description": "ID of the item to delete",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "string"
             }
           }
         ],

@@ -20,10 +20,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "description": {
+                  "message": {
                     "type": "string"
                   }
                 },
@@ -53,7 +50,7 @@
             "description": "ID of the item to retrieve",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "string"
             }
           }
         ],
@@ -76,7 +73,7 @@
             "description": "ID of the item to update",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "string"
             }
           }
         ],
@@ -87,14 +84,11 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "description": {
+                  "message": {
                     "type": "string"
                   }
                 },
-                "required": ["name"]
+                "required": ["message"]
               }
             }
           }
@@ -121,7 +115,7 @@
             "description": "ID of the item to delete",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "string"
             }
           }
         ],

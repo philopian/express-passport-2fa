@@ -8,9 +8,7 @@ const getAllItems = async () => {
 
 const getItemById = async (id) => {
   return await prisma.posts.findUnique({
-    where: {
-      id: parseInt(id),
-    },
+    where: { id },
   });
 };
 
@@ -22,18 +20,14 @@ const createItem = async (data) => {
 
 const updateItem = async (id, data) => {
   return await prisma.posts.update({
-    where: {
-      id: parseInt(id),
-    },
+    where: { id },
     data,
   });
 };
 
 const deleteItem = async (id) => {
   return await prisma.posts.delete({
-    where: {
-      id: parseInt(id),
-    },
+    where: { id },
   });
 };
 
