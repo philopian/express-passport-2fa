@@ -66,9 +66,10 @@ router.get("/logout", passport.authenticate(jwtStrategy.defaultJwt, { session: f
   }
 });
 
-router.post("/refresh", passport.authenticate(jwtStrategy.refreshJwt, { session: false }), async (req, res) => {
+router.get("/refresh", passport.authenticate(jwtStrategy.refreshJwt, { session: false }), async (req, res) => {
   try {
     const { user } = req;
+    console.log("🚀 ~~ refresh:", user.email);
     if (!user) return res.status(401).send({ message: "Unauthorized: Invalid user" });
 
     // Make sure that MFA is enabled for this user in the DB

@@ -1,0 +1,5 @@
+model posts {
+  id       String @id @default(uuid())
+  messages String
+}
+
