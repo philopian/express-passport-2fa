@@ -68,6 +68,7 @@ rl.question("Q: What is your new route's name? ", (newRoute) => {
 NOTE: 
     (1) Add this new route to the "src/main.js" file
     (2) Spread the swagger file in the "src/config.js" file
+    (3) Run "$ yarn prisma" to update the Database's schema
 **********************************************************************
 `);
 

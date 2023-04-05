@@ -13,9 +13,10 @@ datasource db {
 }
 
 model posts {
-  id      String @id @default(uuid())
-  message String @unique
+  id      String  @id @default(uuid())
+  message String  @unique
 }
+
 
 model users {
   id                 String  @id @default(uuid())
@@ -24,3 +25,4 @@ model users {
   isMfaAuthEnabled   Boolean
   hashedRefreshToken String?
 }
+

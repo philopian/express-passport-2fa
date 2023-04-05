@@ -1,8 +1,7 @@
 model users {
-  id                     String  @id @default(uuid())
-  email                  String  @unique
-  password               String
-  isMfaAuthEnabled Boolean
-  hashedRefreshToken     String?
+  id                 String  @id @default(uuid())
+  email              String  @unique
+  password           String
+  isMfaAuthEnabled   Boolean
+  hashedRefreshToken String?
 }
-
